@@ -3,22 +3,25 @@ import { Body, Controller, Delete, Get, Patch, Post } from "@nestjs/common";
 import { ParamId } from "./decorators/param-id.decorator";
 import { CreateUsersDTO } from "./dtos/create-usersDTO";
 import { UpdateUsersDTO } from "./dtos/update-usersDTO";
+import { UsersService } from "./users.service";
 
 @Controller("users")
 export class UsersController {
+  constructor(private readonly usersService: UsersService) {}
+
   @Post()
   async createProfile(@Body() createUserDTO: CreateUsersDTO) {
-    //return this.userService.create(createUserDTO);
+    return this.usersService.create(createUserDTO);
   }
 
   @Get()
   async getAllProfiles() {
-    //return this.userService.getAll();
+    return this.usersService.getAll();
   }
 
   @Get(":id")
   async showProfile(@ParamId() id: number) {
-    //return this.userService.getById(id);
+    return this.usersService.show(id);
   }
 
   @Patch(":id")
@@ -26,11 +29,11 @@ export class UsersController {
     @ParamId() id: number,
     @Body() updateData: UpdateUsersDTO,
   ) {
-    //return this.userService.update(id, updateData);
+    return this.usersService.update(id, updateData);
   }
 
   @Delete(":id")
   async deleteProfile(@ParamId() id: number) {
-    //return this.userService.delete(id);
+    return this.usersService.delete(id);
   }
 }
