@@ -1,4 +1,4 @@
-import { Module } from "@nestjs/common";
+import { Module, forwardRef } from "@nestjs/common";
 import { JwtModule } from "@nestjs/jwt";
 import { UsersRepositoryModule } from "src/users/repositories/users-repository.module";
 import { UsersModule } from "src/users/users.module";
@@ -10,11 +10,11 @@ import { AuthService } from "./auth.service";
     JwtModule.register({
       secret: "95eb73e4d15d9fc5c0ac68e18b834fe9e8329420",
     }),
-    UsersModule,
+    forwardRef(() => UsersModule), //Resolvendo dependencia circular. "Nessa Ponta"
     UsersRepositoryModule,
   ],
   controllers: [AuthController],
   providers: [AuthService],
-  exports: [],
+  exports: [AuthService],
 })
 export class AuthModule {}
