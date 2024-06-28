@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from "@nestjs/common";
+import { Body, Controller, Post, Req, UseGuards } from "@nestjs/common";
 import { ApiResponse, ApiTags } from "@nestjs/swagger";
 import { AuthLoginDTO } from "./dto/auth-login.dto";
 import { UsersService } from "src/users/users.service";
@@ -6,6 +6,7 @@ import { AuthService } from "./auth.service";
 import { AuthRegisterDTO } from "./dto/auth-register.dto";
 import { AuthForgotDTO } from "./dto/auth-forgot.dto";
 import { AuthResetDTO } from "./dto/auth-reset.dto";
+import { AuthGuard } from "./guards/auth.guard";
 
 @ApiTags("auth")
 @Controller("auth")
@@ -42,10 +43,14 @@ export class AuthController {
     return this.authService.reset(password, token);
   }
 
+  @UseGuards(AuthGuard)
   @Post("me")
   @ApiResponse({ status: 201, description: "Reset password link send." })
   @ApiResponse({ status: 404, description: "User not found." })
-  async me(@Body() body) {
-    return this.authService.checkToken(body.token);
+  async me(@Req() req) {
+    return {
+      me: "OK",
+      data: req.tokenPayload,
+    };
   }
 }
