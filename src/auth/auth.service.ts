@@ -1,30 +1,56 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Injectable, UnauthorizedException } from "@nestjs/common";
+import {
+  BadRequestException,
+  Injectable,
+  UnauthorizedException,
+} from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { Users } from "@prisma/client";
 import { UsersRepositoryService } from "src/users/repositories/users-repository.service";
+import { AuthRegisterDTO } from "./dto/auth-register.dto";
+import { UsersService } from "src/users/users.service";
 
 @Injectable()
 export class AuthService {
+  private issuer = "login";
   constructor(
     private readonly jwtService: JwtService,
     private readonly usersRepository: UsersRepositoryService,
+    private readonly usersService: UsersService,
   ) {}
+
   async createToken(user: Users) {
-    return this.jwtService.sign(
-      {
-        sub: user.id,
-      },
-      {
-        expiresIn: "1 days",
-        subject: String(user.id),
-        issuer: "Api nest js",
-      },
-    );
+    return {
+      accessToken: this.jwtService.sign(
+        {
+          sub: user.id,
+        },
+        {
+          expiresIn: "1 days",
+          issuer: this.issuer,
+        },
+      ),
+    };
   }
 
-  async checkToken() {
-    //return await this.jwtService.signAsync(payload, options);
+  async checkToken(token: string) {
+    try {
+      const data = await this.jwtService.verify(token, {
+        issuer: this.issuer,
+      });
+      return data;
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
+  }
+
+  async isValidToken(token: string) {
+    try {
+      this.checkToken(token);
+      return true;
+    } catch (error) {
+      return false;
+    }
   }
 
   async login(email: string, password: string) {
@@ -58,5 +84,13 @@ export class AuthService {
     const user = await this.usersRepository.updatePassword(id, password);
 
     return this.createToken(user);
+  }
+
+  async register(body: AuthRegisterDTO) {
+    const user = await this.usersService.create(body);
+    return {
+      user: user,
+      acessToken: this.createToken(user),
+    };
   }
 }
