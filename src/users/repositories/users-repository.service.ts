@@ -14,6 +14,8 @@ export class UsersRepositoryService {
     password,
     phone,
     city,
+    role,
+    isActive,
   }: CreateUsersDTO): Promise<Users> {
     const user = await this.prisma.users.create({
       data: {
@@ -22,6 +24,8 @@ export class UsersRepositoryService {
         password,
         phone,
         city,
+        role,
+        isActive,
       },
       select: {
         id: true,
@@ -32,6 +36,8 @@ export class UsersRepositoryService {
         createdAt: true,
         updateAt: true,
         password: false,
+        role: true,
+        isActive: true,
       },
     });
 
@@ -49,6 +55,8 @@ export class UsersRepositoryService {
         createdAt: true,
         updateAt: true,
         password: false,
+        role: true,
+        isActive: true,
       },
     });
     return users as Users[];
@@ -56,7 +64,7 @@ export class UsersRepositoryService {
 
   async update(
     userId: number,
-    { name, phone, city }: UpdateUsersDTO,
+    { name, phone, city, isActive }: UpdateUsersDTO,
   ): Promise<Users> {
     const user = await this.prisma.users.update({
       where: {
@@ -66,6 +74,7 @@ export class UsersRepositoryService {
         name,
         phone,
         city,
+        isActive,
       },
     });
 
@@ -95,6 +104,8 @@ export class UsersRepositoryService {
         createdAt: true,
         updateAt: true,
         password: false,
+        role: true,
+        isActive: true,
       },
     });
     return user as Users;
@@ -113,6 +124,8 @@ export class UsersRepositoryService {
         createdAt: true,
         updateAt: true,
         password: false,
+        role: true,
+        isActive: true,
       },
     });
     return user as Users;
@@ -121,7 +134,7 @@ export class UsersRepositoryService {
   async findByPhone(phone: string): Promise<Users | null> {
     const user = await this.prisma.users.findFirst({
       where: {
-        phone: phone, // Isso exclui o proprio usuario da busca, Garantia
+        phone: phone,
       },
     });
     return user as Users;
@@ -145,6 +158,8 @@ export class UsersRepositoryService {
         createdAt: true,
         updateAt: true,
         password: false,
+        role: true,
+        isActive: true,
       },
     });
 
