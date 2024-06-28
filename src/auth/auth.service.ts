@@ -87,10 +87,11 @@ export class AuthService {
   }
 
   async register(body: AuthRegisterDTO) {
-    const user = await this.usersService.create(body);
-    return {
-      user: user,
-      acessToken: this.createToken(user),
-    };
+    try {
+      const user = await this.usersService.create(body);
+      return this.createToken(user);
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 }

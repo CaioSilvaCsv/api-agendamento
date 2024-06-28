@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Post } from "@nestjs/common";
+import { Body, Controller, Post } from "@nestjs/common";
 import { ApiResponse, ApiTags } from "@nestjs/swagger";
 import { AuthLoginDTO } from "./dto/auth-login.dto";
 import { UsersService } from "src/users/users.service";
@@ -25,14 +25,7 @@ export class AuthController {
   @ApiResponse({ status: 201, description: "User registered successfully." })
   @ApiResponse({ status: 400, description: "Bad request." })
   async register(@Body() body: AuthRegisterDTO) {
-    try {
-      return await this.usersService.create(body);
-    } catch (error) {
-      if (error.message === "O telefone já está em uso") {
-        throw new BadRequestException(error.message);
-      }
-      throw error;
-    }
+    return this.authService.register(body);
   }
 
   @Post("forgot")
@@ -47,5 +40,12 @@ export class AuthController {
   @ApiResponse({ status: 400, description: "Invalid or expired token." })
   async reset(@Body() { password, token }: AuthResetDTO) {
     return this.authService.reset(password, token);
+  }
+
+  @Post("me")
+  @ApiResponse({ status: 201, description: "Reset password link send." })
+  @ApiResponse({ status: 404, description: "User not found." })
+  async me(@Body() body) {
+    return this.authService.checkToken(body.token);
   }
 }
