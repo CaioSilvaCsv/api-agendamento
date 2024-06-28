@@ -18,6 +18,8 @@ export class UsersService {
     password,
     phone,
     city,
+    role,
+    isActive,
   }: CreateUsersDTO): Promise<Users> {
     const userByEmail = await this.usersRepository.findByEmail(email);
 
@@ -36,6 +38,8 @@ export class UsersService {
       password,
       phone,
       city,
+      role,
+      isActive,
     });
 
     return user;
@@ -64,6 +68,7 @@ export class UsersService {
       name: updateData.name,
       phone: updateData.phone,
       city: updateData.city,
+      isActive: updateData.isActive,
     });
     return user;
   }
