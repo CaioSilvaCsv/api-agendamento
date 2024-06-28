@@ -118,11 +118,10 @@ export class UsersRepositoryService {
     return user as Users;
   }
 
-  async findByPhone(phone: string, id: number): Promise<Users | null> {
+  async findByPhone(phone: string): Promise<Users | null> {
     const user = await this.prisma.users.findFirst({
       where: {
-        phone: phone,
-        id: { not: id }, // Isso exclui o proprio usuario da busca, Garantia
+        phone: phone, // Isso exclui o proprio usuario da busca, Garantia
       },
     });
     return user as Users;

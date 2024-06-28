@@ -19,10 +19,15 @@ export class UsersService {
     phone,
     city,
   }: CreateUsersDTO): Promise<Users> {
-    const userExits = await this.usersRepository.findByEmail(email);
+    const userByEmail = await this.usersRepository.findByEmail(email);
 
-    if (userExits) {
+    if (userByEmail) {
       throw new ConflictException("Email is already in use");
+    }
+
+    const userByPhone = await this.usersRepository.findByPhone(phone);
+    if (userByPhone) {
+      throw new ConflictException("Phone is already in use");
     }
 
     const user = await this.usersRepository.create({
@@ -46,7 +51,6 @@ export class UsersService {
     if (updateData.phone && updateData.phone !== userExists.phone) {
       const phoneInUse = await this.usersRepository.findByPhone(
         updateData.phone,
-        id,
       );
 
       if (phoneInUse) {
