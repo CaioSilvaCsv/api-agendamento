@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { MinLength } from "class-validator";
+import { IsUUID, MinLength } from "class-validator";
 
 export class AuthResetDTO {
   @ApiProperty({
@@ -7,4 +7,7 @@ export class AuthResetDTO {
   })
   @MinLength(6)
   password: string;
+
+  @IsUUID()
+  token: string;
 }

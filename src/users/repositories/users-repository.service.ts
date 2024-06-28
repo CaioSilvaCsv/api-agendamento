@@ -127,4 +127,41 @@ export class UsersRepositoryService {
     });
     return user as Users;
   }
+
+  async findEmailAndPassword(
+    email: string,
+    password: string,
+  ): Promise<Users | null> {
+    const user = await this.prisma.users.findFirst({
+      where: {
+        email,
+        password,
+      },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        phone: true,
+        city: true,
+        createdAt: true,
+        updateAt: true,
+        password: false,
+      },
+    });
+
+    return user as Users;
+  }
+
+  async updatePassword(userId: number, password: string): Promise<Users> {
+    const user = await this.prisma.users.update({
+      where: {
+        id: userId,
+      },
+      data: {
+        password,
+      },
+    });
+
+    return user as Users;
+  }
 }
