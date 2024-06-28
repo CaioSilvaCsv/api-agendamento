@@ -1,20 +1,17 @@
-import { Body, Controller, Post, Req, UseGuards } from "@nestjs/common";
+import { Body, Controller, Post, UseGuards } from "@nestjs/common";
 import { ApiResponse, ApiTags } from "@nestjs/swagger";
 import { AuthLoginDTO } from "./dto/auth-login.dto";
-import { UsersService } from "src/users/users.service";
 import { AuthService } from "./auth.service";
 import { AuthRegisterDTO } from "./dto/auth-register.dto";
 import { AuthForgotDTO } from "./dto/auth-forgot.dto";
 import { AuthResetDTO } from "./dto/auth-reset.dto";
 import { AuthGuard } from "./guards/auth.guard";
+import { User } from "src/users/decorators/user.decorator";
 
 @ApiTags("auth")
 @Controller("auth")
 export class AuthController {
-  constructor(
-    private readonly usersService: UsersService,
-    private readonly authService: AuthService,
-  ) {}
+  constructor(private readonly authService: AuthService) {}
   @Post("login")
   @ApiResponse({ status: 201, description: "User logged in successfully." })
   @ApiResponse({ status: 401, description: "Invalid credentials." })
@@ -47,10 +44,9 @@ export class AuthController {
   @Post("me")
   @ApiResponse({ status: 201, description: "Reset password link send." })
   @ApiResponse({ status: 404, description: "User not found." })
-  async me(@Req() req) {
+  async me(@User() user) {
     return {
-      me: "OK",
-      data: req.tokenPayload,
+      user,
     };
   }
 }
