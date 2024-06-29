@@ -7,6 +7,7 @@ import { UsersRepositoryService } from "./repositories/users-repository.service"
 import { CreateUsersDTO } from "./dtos/create-usersDTO";
 import { Users } from "@prisma/client";
 import { UpdateUsersDTO } from "./dtos/update-usersDTO";
+import * as bcrypt from "bcrypt";
 
 @Injectable()
 export class UsersService {
@@ -32,10 +33,11 @@ export class UsersService {
       throw new ConflictException("Phone is already in use");
     }
 
+    const hashedPassword = await bcrypt.hash(password, await bcrypt.genSalt());
     const user = await this.usersRepository.create({
       name,
       email,
-      password,
+      password: hashedPassword,
       phone,
       city,
       role,
