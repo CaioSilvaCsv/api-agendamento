@@ -115,18 +115,6 @@ export class UsersRepositoryService {
       where: {
         email: email,
       },
-      select: {
-        id: true,
-        name: true,
-        email: true,
-        phone: true,
-        city: true,
-        createdAt: true,
-        updateAt: true,
-        password: false,
-        role: true,
-        isActive: true,
-      },
     });
     return user as Users;
   }
