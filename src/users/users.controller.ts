@@ -1,11 +1,24 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import { Body, Controller, Delete, Get, Patch, Post } from "@nestjs/common";
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Patch,
+  Post,
+  UseGuards,
+} from "@nestjs/common";
 import { ParamId } from "./decorators/param-id.decorator";
 import { CreateUsersDTO } from "./dtos/create-usersDTO";
 import { UpdateUsersDTO } from "./dtos/update-usersDTO";
 import { UsersService } from "./users.service";
 import { ApiParam, ApiResponse, ApiTags } from "@nestjs/swagger";
+import { RoleGuard } from "./guards/role.guard";
+import { Roles } from "./decorators/roles.decorator";
+import { Role } from "./enums/role.enum";
+import { AuthGuard } from "src/auth/guards/auth.guard";
 
+@Roles(Role.Admin)
+@UseGuards(AuthGuard, RoleGuard) //Possivel erro de dependencia. Resolvendo usando a função forwardRef(() => [Modulo que gera dependencia])
 @ApiTags("Users")
 @Controller("users")
 export class UsersController {
