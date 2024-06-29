@@ -9,6 +9,7 @@ import { Users } from "@prisma/client";
 import { UsersRepositoryService } from "src/users/repositories/users-repository.service";
 import { AuthRegisterDTO } from "./dto/auth-register.dto";
 import { UsersService } from "src/users/users.service";
+import * as bcrypt from "bcrypt";
 
 @Injectable()
 export class AuthService {
@@ -54,12 +55,13 @@ export class AuthService {
   }
 
   async login(email: string, password: string) {
-    const userExits = await this.usersRepository.findEmailAndPassword(
-      email,
-      password,
-    );
+    const userExits = await this.usersRepository.findByEmail(email);
 
     if (!userExits) {
+      throw new UnauthorizedException("Incorrect email and/or password");
+    }
+
+    if (!(await bcrypt.compare(password, userExits.password))) {
       throw new UnauthorizedException("Incorrect email and/or password");
     }
 
